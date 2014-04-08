@@ -1,0 +1,156 @@
+/* CSS Document */
+/* line 4, ../sass/_main.scss */
+body {
+  width: 100%;
+  height: 100%;
+  background-image: url(../img/bg.png);
+  background-repeat: repeat;
+  background-position: center top;
+  padding: 0;
+  margin: 0;
+}
+
+/* line 14, ../sass/_main.scss */
+.wrapper {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  min-width: 1024px;
+  min-height: 100%;
+  left: 0;
+  top: 0;
+  cursor: default;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+/* line 28, ../sass/_main.scss */
+.wrapper:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 280px;
+  background-image: url(../img/bg_texture.png);
+  background-position: center top;
+  background-repeat: repeat-x;
+  z-index: 40;
+}
+
+/* line 39, ../sass/_main.scss */
+.wrapper:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 170px;
+  bottom: 0;
+  background-image: url(../img/bg_texture.png);
+  background-position: center top;
+  background-repeat: repeat-x;
+  -moz-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+  z-index: 40;
+}
+
+/* line 55, ../sass/_main.scss */
+.start {
+  width: 300px;
+  height: 100%;
+  position: relative;
+}
+
+/* line 61, ../sass/_main.scss */
+.home {
+  width: 173px;
+  height: 128px;
+  position: absolute;
+  background-image: url(../img/house.png);
+  background-repeat: no-repeat;
+  bottom: 170px;
+  z-index: 10;
+}
+
+/* line 71, ../sass/_main.scss */
+.grass {
+  background-image: url(../img/grass.png);
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 296px;
+  height: 46px;
+  bottom: 170px;
+  z-index: 20;
+}
+
+/* line 81, ../sass/_main.scss */
+.rock {
+  background-image: url(../img/rock.png);
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 297px;
+  height: 172px;
+  bottom: 0;
+  z-index: 15;
+}
+
+/* line 91, ../sass/_main.scss */
+#scrumpy {
+  position: relative;
+  width: 100px;
+  height: 101px;
+  z-index: 18;
+  margin-left: 178px;
+  margin-top: 0px;
+  bottom: 272px;
+}
+
+/* line 101, ../sass/_main.scss */
+.animate {
+  transition-duration: 0.7s !important;
+  -o-transition-duration: 0.7s !important;
+  -webkit-transition-duration: 0.7s !important;
+  -moz-transition-duration: 0.7s !important;
+}
+
+/* line 108, ../sass/_main.scss */
+.obstacles_wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* line 115, ../sass/_main.scss */
+.clouds {
+  position: relative;
+  width: 100%;
+}
+
+/* line 120, ../sass/_main.scss */
+.cloud {
+  position: absolute;
+  right: -100px;
+  display: inline-block;
+  min-width: 100px;
+  height: 100%;
+  background-image: url(../img/clouds/cloud_1.png);
+  background-position: center top;
+  background-repeat: no-repeat;
+  margin-left: 20px;
+}
+
+/* line 132, ../sass/_main.scss */
+.flip {
+  -webkit-transform: rotateZ(360deg);
+  -moz-transform: rotateZ(360deg);
+  -ms-transform: rotateZ(360deg);
+  -o-transform: rotateZ(360deg);
+  transform: rotateZ(360deg);
+  transition-duration: 0.7s !important;
+  -o-transition-duration: 0.7s !important;
+  -webkit-transition-duration: 0.7s !important;
+  -moz-transition-duration: 0.7s !important;
+}
+
+/* CSS Document */
