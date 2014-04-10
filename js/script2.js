@@ -115,7 +115,7 @@ function cloud_add()
 		clouds_move(i);
 		//game_logic(i);
 		//cloud_remove();
-		//console.log("cloud_row_array:",cloud_array);
+		console.log("cloud_row_array:",cloud_array);
 	}
 	//console.log("",cloud_array.length);
 	//clearInterval(timeInterval);
@@ -133,7 +133,9 @@ function clouds_move(i)
 				duration:cloud_speed_move,
 				complete:function(){
 					$("div#cloud_id_"+i).remove();
+					delete cloud_array[i];
 				}
+			
 			});
 		//console.log("cloud:",cloud);
 	}
