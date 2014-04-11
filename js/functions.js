@@ -10,15 +10,25 @@ $(document).ready(function(e) {
   game_settings();
   navigation();
   time();
+  setInterval(function(){
+  	$("div.cloud").each(function(){
+  	// object_check(scrampy);
+  	// object_check($(this));
+  	object_compare(object_check(scrampy),object_check($(this)));	
+  });
+  },50);
 });
 function game_settings()
 {
 	seconds = 0;
 	minutes = 0;
 	step = 178;
+	cloud_id = 0;
+	comp_el = 0;
 	scrampy = $("#scrumpy");
     wind_width = $(".obstacles_wrapper").width();
 	wind_height = $(document).height();
+	//console.log("wind_height:", wind_height);
 	$(".wrapper").height(wind_height);
 	stripe_height = 75;
 	step = 178;
@@ -26,31 +36,31 @@ function game_settings()
 		{
 			numb_of_stripes = 6;
 		}
-		else if(wind_height >= 600)
+		if(wind_height > 600)
 		{
 			numb_of_stripes = 7;
 		}
-		else if(wind_height >= 700)
+		if(wind_height > 700)
 		{
 			numb_of_stripes = 9;
 		}
-		else if(wind_height >=800)
+		if(wind_height >800)
 		{
 			numb_of_stripes = 10;
 		}
-		else if(wind_height >=900)
+		if(wind_height >900)
 		{
 			numb_of_stripes = 12;
 		}
-		else if(wind_height >=1000)
+		if(wind_height >1000)
 		{
 			numb_of_stripes = 13;
 		}
-		else if(wind_height >=1100)
+		if(wind_height >1100)
 		{
 			numb_of_stripes = 14;
 		}
-		else if(wind_height >=1200)
+		if(wind_height >1200)
 		{
 			numb_of_stripes = 16;
 		}
@@ -59,7 +69,6 @@ function game_settings()
 		$("div.obstacles_wrapper").css({"padding-top":obstacles_wrapper_padding+"px"});
 		$("div.obstacles_wrapper").css({"padding-bottom":obstacles_wrapper_padding+"px"});
 		$("div.obstacles_wrapper").height(obstacles_wrapper_height);
-		cloud_array =[];
 		for(var i=1; i<=numb_of_stripes; i++)
 		{
 			$("div.obstacles_wrapper").append("<div class='clouds' id='clouds_id_"+i+"'></div>");
@@ -143,7 +152,7 @@ function time(){
 			seconds = 0;
 			minutes = minutes+1;
 		}
-		object_check(scrampy);
+		cloud_add();
 		////console.log("seconds",seconds);
 	},1000);
 };
@@ -158,6 +167,7 @@ function object_check(object_init){
 			name: object_init.attr("id"),
 			true_flag: true, 
 	 	};
+	 	console.log("name:",object_return.name);
 		//console.log("x:",object_return.x);
   	    //console.log("y:",object_return.y);
         //console.log("width:",object_return.width);
@@ -174,8 +184,8 @@ function object_move(object_init){
 		new_object_X = last_object_X;
 		new_object_Y = last_object_Y;
 	},10);
-	// console.log("last_object_X:",last_object_X);
-	// console.log("new_object_X:",new_object_X);
+	 //console.log("last_object_X:",last_object_X);
+	 //console.log("new_object_X:",new_object_X);
 	if (last_object_X != new_object_X || last_object_Y != new_object_Y)
 	{
 		object_limit(object_init);
@@ -216,4 +226,75 @@ function object_init(object_init)
 function object_destroy(object_init)
 {
 	$(this).remove();
+}
+function cloud_add()
+{
+	cloud_id=cloud_id+1;
+	rand_el =  Math.floor(Math.random() * (numb_of_stripes - 1) + 1);
+	if (comp_el == 0)
+	{
+	comp_el =  Math.floor(Math.random() * (numb_of_stripes - 1) + 1);
+	}
+	else if (comp_el == rand_el)
+			{
+				do
+				{
+				rand_el = Math.floor(Math.random() * (numb_of_stripes - 1) + 1);
+				//console.log("new_rend",rand_el);
+				}while(rand_el != comp_el);
+			}
+	comp_el = rand_el;
+	//cloud_array = [];
+	$("#clouds_id_"+comp_el).append("<div class='cloud' id='cloud_id_"+cloud_id+"'></div>");
+	cloud = $("div#cloud_id_"+cloud_id);
+	clouds_move(cloud);
+	//object_check(cloud);
+	// for(var i=1; i<cloud_id; i++)
+	// {
+	// 	cloud_array.push(i);
+	// 	clouds_move(i);
+		//game_logic(i);
+		//cloud_remove();
+	// 	console.log("cloud_row_array:",cloud_array);
+	// }
+	//console.log("",cloud_array.length);
+	//clearInterval(timeInterval);
+	//timeInterval = setInterval(cloud_remove,5);
+}
+function clouds_move(cloud)
+{
+		cloud_speed_move = 12000 - (2000*minutes);
+		if (minutes >= 4)
+		{
+			cloud_speed_move = 4000;
+		}
+			cloud.animate({right:wind_width+"px"}, {
+			duration:cloud_speed_move,
+			complete:function(){
+				cloud.remove();
+				//delete cloud;
+			}
+		});
+}
+function object_compare(obj1,obj2)
+{
+	var XComp = false;
+	var YComp = false;
+	console.log("object_compare");
+	console.log("object1_x:",obj1.x);
+	console.log("object2_x:",obj2.x);
+	if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width)) 
+		{
+			//alert("yes");
+			//console.log("yes");
+			XComp = true;
+		}
+	if((obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height))
+		{
+			//alert("yes");
+			YComp = true;
+			//console.log("yes");
+		} 
+	if (XComp & YComp){return true;}
+	return false;
 }
