@@ -10,22 +10,28 @@ $(document).ready(function(e) {
   game_settings();
   navigation();
   time();
+ // console.log("speed:",speed);
+  setInterval(cloud_add,speed);
   setInterval(function(){
   	$("div.cloud").each(function(){
   	// object_check(scrampy);
   	// object_check($(this));
   	object_compare(object_check(scrampy),object_check($(this)));	
+  	//console.log("compare",compare);
   });
-  },50);
+  },10);
 });
 function game_settings()
 {
 	seconds = 0;
 	minutes = 0;
 	step = 178;
+	speed = 1500;
 	cloud_id = 0;
 	comp_el = 0;
+	compare = false;
 	scrampy = $("#scrumpy");
+	new_object_X = 0;
     wind_width = $(".obstacles_wrapper").width();
 	wind_height = $(document).height();
 	//console.log("wind_height:", wind_height);
@@ -152,10 +158,20 @@ function time(){
 			seconds = 0;
 			minutes = minutes+1;
 		}
-		cloud_add();
+		difficult(minutes);
 		////console.log("seconds",seconds);
 	},1000);
 };
+function difficult(minutes)
+{
+	speed = 1500-((500*minutes)/2);
+		if(speed <= 500)
+		{
+			speed == 500;
+		}
+		//console.log("spd:",speed);
+		return speed;
+}
 function object_check(object_init){
     if (typeof object_init !== undefined)
     {
@@ -167,7 +183,7 @@ function object_check(object_init){
 			name: object_init.attr("id"),
 			true_flag: true, 
 	 	};
-	 	console.log("name:",object_return.name);
+	 	//console.log("name:",object_return.name);
 		//console.log("x:",object_return.x);
   	    //console.log("y:",object_return.y);
         //console.log("width:",object_return.width);
@@ -202,27 +218,10 @@ function object_limit(object_init)
 	if(object_init.x >= (wind_width-object_init.width) || object_init.x <= 0)
 	{
 		//console.log("in if object_limit");
-		object_init(object_init);
+		// /object_init(object_init);
 	}
 }
-function object_init(object_init)
-{
-	if(object_init.name == "scrumpy")
-	{
-		if (object_init.y <= 0)
-		{
-			object_destroy(object_init);
-		}
-		else if(object_init.y >= (wind_height-object_init.height))
-		{
 
-		}
-	}
-	else
-	{
-		object_destroy(object_init);
-	}
-}
 function object_destroy(object_init)
 {
 	$(this).remove();
@@ -248,18 +247,6 @@ function cloud_add()
 	$("#clouds_id_"+comp_el).append("<div class='cloud' id='cloud_id_"+cloud_id+"'></div>");
 	cloud = $("div#cloud_id_"+cloud_id);
 	clouds_move(cloud);
-	//object_check(cloud);
-	// for(var i=1; i<cloud_id; i++)
-	// {
-	// 	cloud_array.push(i);
-	// 	clouds_move(i);
-		//game_logic(i);
-		//cloud_remove();
-	// 	console.log("cloud_row_array:",cloud_array);
-	// }
-	//console.log("",cloud_array.length);
-	//clearInterval(timeInterval);
-	//timeInterval = setInterval(cloud_remove,5);
 }
 function clouds_move(cloud)
 {
@@ -278,23 +265,43 @@ function clouds_move(cloud)
 }
 function object_compare(obj1,obj2)
 {
-	var XComp = false;
-	var YComp = false;
-	console.log("object_compare");
-	console.log("object1_x:",obj1.x);
-	console.log("object2_x:",obj2.x);
-	if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width)) 
+	// var XComp = false;
+	// var YComp = false;
+	// console.log("object_compare");
+	// console.log("object1_x:",obj1.x);
+    compare = false;
+	if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height)) 
 		{
 			//alert("yes");
 			//console.log("yes");
-			XComp = true;
+			compare = true;
+			return compare;
 		}
-	if((obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height))
-		{
-			//alert("yes");
-			YComp = true;
-			//console.log("yes");
-		} 
-	if (XComp & YComp){return true;}
-	return false;
+	 fall_down(obj1,compare);
+	 return compare;
+}
+function fall_down(obj1,compare){
+	// console.log("object1_y:",obj1.y);
+	// console.log("wind_height:",wind_height);
+	// console.log("scrumpy_height:",scrampy.height());
+	var rock_width = $("div.rock").width();
+	var rock_height = $("div.rock").height();
+	var current_pos = obj1.y+scrampy.height();
+	var distance_to_fall = wind_height - current_pos;
+	console.log("distance_to_fall:",distance_to_fall);
+	var fall = scrampy.animate({marginTop: distance_to_fall+"px"},700);
+	if((obj1.x + obj1.width >= $("div.rock").offset().left) && (obj1.x <= $("div.rock").offset().left + rock_width) && (obj1.y+obj1.height >= $("div.rock").offset().top) && (obj1.y <= $("div.rock").offset().top + rock_height))
+	{
+		console.log("yes");
+		fall.stop();
+	}
+	if (distance_to_fall <= 0)
+	{
+		alert("GAME OVER");
+	}
+	if (compare == true)
+	{
+		fall.stop();
+	}
+	
 }
