@@ -1,3 +1,6 @@
+//file script - first version of logic
+//file script2 - second version of logic 
+//file functions - third version of logic (almost done)
 $(document).ready(function() {
 	 set_default = function(){
 		var seconds = 0;
@@ -80,39 +83,3 @@ $(document).ready(function() {
 	    return new_object;
 	};
 });
-// var object_check = function(object){
-// 	 if (typeof object !== undefined)
-//     {
-//     	new_object = {
-// 			width: object.width(),
-// 			height: object.height(),
-// 			x: object.offset().left,
-// 			y: object.offset().top,
-// 			name: object.attr("id")
-// 	 	};
-//     }
-//     return new_object;
-// }();
-// var object_move = function(object){
-// 	var last_object_X = object.x;
-// 	var last_object_Y = object.y;
-// 	var new_object_X = 0;
-// 	var new_object_Y = 0;
-// 	setInterval(function () {
-// 		new_object_X = last_object_X;
-// 		new_object_Y = last_object_Y;
-// 	},10);
-// 	if (last_object_X != new_object_X || last_object_Y != new_object_Y)
-// 	{
-		
-// 		return true;
-// 	}
-// 	return false;
-// }();
-// var object_limit = function(object){
-// 	if (object_move)
-// 	{
-// 		if(object.x >= (-object.width))
-// 		{}
-// 	}
-// }
