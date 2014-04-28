@@ -8,8 +8,8 @@ function include(url) {
 //include('js/main.js');
 $(document).ready(function(e) {
   game_settings();
-  navigation();
   time();
+  navigation();
  // console.log("speed:",speed);
   setInterval(cloud_add,speed);
   setInterval(function(){
@@ -18,6 +18,7 @@ $(document).ready(function(e) {
   	// object_check($(this));
   	object_compare(object_check(scrampy),object_check($(this)));	
   	//console.log("compare",compare);
+  	fall_down(compare);
   });
   },10);
 });
@@ -25,7 +26,7 @@ function game_settings()
 {
 	seconds = 0;
 	minutes = 0;
-	step = 178;
+	// step = 178;
 	speed = 1500;
 	cloud_id = 0;
 	comp_el = 0;
@@ -80,74 +81,6 @@ function game_settings()
 			$("div.obstacles_wrapper").append("<div class='clouds' id='clouds_id_"+i+"'></div>");
 		}
 		$("div.clouds").height(stripe_height);
-}
-function navigation(){
-		$(window).keydown(function key_pressed(e){
-		////console.log("code:",e.keyCode);
-		////console.log("step:",step);
-			switch(e.keyCode) {
-				//пробел 
-				case 32:
-				{
-					$("#scrumpy").addClass("animate");
-					if(step >= (wind_width-$("#scrumpy").width()))
-					{
-						step = wind_width-$("#scrumpy").width();	
-					}
-					else
-					{
-						step=step+10;
-					}
-					$("#scrumpy").css({"margin-top": -140+"px","margin-left":step+"px"});
-					$("#scrumpy").addClass("flip");
-				}
-				break;
-				//стрелка вправо
-				case 39:
-					if(step >= (wind_width-$("#scrumpy").width()))
-					{
-						step = wind_width-$("#scrumpy").width();	
-					}
-					else
-					{
-						step=step+10;
-					}
-					$("#scrumpy").css({"margin-left":step+"px"});
-				break;
-				//стрелка влево
-				case 37:
-					if(step <= (wind_width - wind_width-$("#scrumpy").width()+100))
-					{
-						step =wind_width - wind_width-$("#scrumpy").width()+100;						
-					}
-					else
-					{
-						step=step-10;
-					}
-					$("#scrumpy").css({"margin-left":step+"px"});
-				break;
-			}
-		});
-		$(window).keyup(function key_up(e){
-			switch(e.keyCode) {
-					//пробел
-					case 32:
-					{
-						$("#scrumpy").css({"margin-top": 0+"px"});
-						$("#scrumpy").removeClass("animate"); 
-						$("#scrumpy").removeClass("flip");
-					}
-					break;
-					//стрелка вправо
-					case 39: 
-						$("#scrumpy").stop();
-					break;
-					//стрелка влево
-					case 37:
-						$("#scrumpy").stop();
-					break;
-				}
-			});	
 }
 function time(){
 	timeInterval = setInterval(function()
@@ -269,39 +202,109 @@ function object_compare(obj1,obj2)
 	// var YComp = false;
 	// console.log("object_compare");
 	// console.log("object1_x:",obj1.x);
+	var rock_width = $("div.rock").width();
+	var rock_height = $("div.rock").height();
     compare = false;
-	if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height)) 
+	if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height) || ((obj1.x + obj1.width >= $("div.rock").offset().left) && (obj1.x <= $("div.rock").offset().left + rock_width) && (obj1.y+obj1.height >= $("div.rock").offset().top) && (obj1.y <= $("div.rock").offset().top + rock_height))) 
 		{
 			//alert("yes");
-			//console.log("yes");
+			console.log("yes");
 			compare = true;
 			return compare;
 		}
-	 fall_down(obj1,compare);
-	 return compare;
+	 return {compare:compare};
 }
-function fall_down(obj1,compare){
+function fall_down(compare){
+	console.log(compare);
 	// console.log("object1_y:",obj1.y);
 	// console.log("wind_height:",wind_height);
 	// console.log("scrumpy_height:",scrampy.height());
-	var rock_width = $("div.rock").width();
-	var rock_height = $("div.rock").height();
-	var current_pos = obj1.y+scrampy.height();
-	var distance_to_fall = wind_height - current_pos;
-	console.log("distance_to_fall:",distance_to_fall);
-	var fall = scrampy.animate({marginTop: distance_to_fall+"px"},700);
-	if((obj1.x + obj1.width >= $("div.rock").offset().left) && (obj1.x <= $("div.rock").offset().left + rock_width) && (obj1.y+obj1.height >= $("div.rock").offset().top) && (obj1.y <= $("div.rock").offset().top + rock_height))
+	current_pos = scrampy.offset().top+scrampy.height();
+	distance_to_fall = wind_height - current_pos;
+	console.log("current_pos",current_pos);
+	console.log("distance_to_fall",distance_to_fall);
+	if(compare == false)
 	{
-		console.log("yes");
+		console.log("in if");
+		fall = scrampy.animate({top: current_pos+distance_to_fall-100+"px"},700);
+	} else {
 		fall.stop();
 	}
-	if (distance_to_fall <= 0)
-	{
-		alert("GAME OVER");
-	}
-	if (compare == true)
-	{
-		fall.stop();
-	}
+
 	
+}
+function navigation(){
+		$(window).keydown(function key_pressed(e){
+		////console.log("code:",e.keyCode);
+		////console.log("step:",step);
+		console.log("obj1.y:",scrampy.offset().top);
+		console.log("obj1.x:",scrampy.offset().left);
+		var current_pos = scrampy.offset().top+scrampy.height();
+		var step = current_pos - 250;
+		console.log(step);
+			switch(e.keyCode) {
+				//пробел 
+				case 32:
+				{
+					// $("#scrumpy").addClass("animate");
+					// $("#scrumpy").addClass("flip");
+					// if(step >= (wind_width-$("#scrumpy").width()))
+					// {
+					// 	step = wind_width-$("#scrumpy").width();	
+					// }
+					// else
+					// {
+					// 	step=step+10;
+					// }
+				//	$("#scrumpy").css({"margin-top":obj1.y -140+"px","margin-left":step+"px"});
+					$("#scrumpy").css({"top":step+"px"});
+					scrampy.offset().top = step;
+				}
+				break;
+				//стрелка вправо
+				case 39:
+					if(step >= (wind_width-$("#scrumpy").width()))
+					{
+						step = wind_width-$("#scrumpy").width();	
+					}
+					else
+					{
+						step=step+10;
+					}
+					$("#scrumpy").css({"margin-left":step+"px"});
+				break;
+				//стрелка влево
+				case 37:
+					if(step <= (wind_width - wind_width-$("#scrumpy").width()+100))
+					{
+						step =wind_width - wind_width-$("#scrumpy").width()+100;						
+					}
+					else
+					{
+						step=step-10;
+					}
+					$("#scrumpy").css({"margin-left":step+"px"});
+				break;
+			}
+		});
+		$(window).keyup(function key_up(e){
+			switch(e.keyCode) {
+					//пробел
+					case 32:
+					{
+						$("#scrumpy").css({"margin-top": 0+"px"});
+						$("#scrumpy").removeClass("animate"); 
+						$("#scrumpy").removeClass("flip");
+					}
+					break;
+					//стрелка вправо
+					case 39: 
+						$("#scrumpy").stop();
+					break;
+					//стрелка влево
+					case 37:
+						$("#scrumpy").stop();
+					break;
+				}
+			});	
 }

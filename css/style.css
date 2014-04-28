@@ -96,12 +96,13 @@ body {
 
 /* line 91, ../sass/_main.scss */
 #scrumpy {
-  position: relative;
+  position: absolute;
   width: 100px;
   height: 101px;
+  top: 380px;
   z-index: 18;
   margin-left: 178px;
-  margin-top: 0px;
+ /* margin-top: 0px;*/
   bottom: 272px;
 }
 
