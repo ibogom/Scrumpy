@@ -116,11 +116,6 @@ function object_check(object_init){
 			name: object_init.attr("id"),
 			true_flag: true, 
 	 	};
-	 	//console.log("name:",object_return.name);
-		//console.log("x:",object_return.x);
-  	    //console.log("y:",object_return.y);
-        //console.log("width:",object_return.width);
-        //console.log("height:",object_return.height);
         object_move(object_return);
     }
     return object_return;
@@ -133,8 +128,6 @@ function object_move(object_init){
 		new_object_X = last_object_X;
 		new_object_Y = last_object_Y;
 	},10);
-	 //console.log("last_object_X:",last_object_X);
-	 //console.log("new_object_X:",new_object_X);
 	if (last_object_X != new_object_X || last_object_Y != new_object_Y)
 	{
 		object_limit(object_init);
@@ -144,14 +137,10 @@ function object_move(object_init){
 }
 function object_limit(object_init)
 {
-	// console.log("in object_limit");
-	// console.log("x:",object_init.x);
-	// console.log("y:",object_init.y);
-	// console.log("wind_width:",wind_width);
 	if(object_init.x >= (wind_width-object_init.width) || object_init.x <= 0)
 	{
-		//console.log("in if object_limit");
-		// /object_init(object_init);
+			//console.log("in if object_limit");
+			// /object_init(object_init);
 	}
 }
 
@@ -172,7 +161,6 @@ function cloud_add()
 				do
 				{
 				rand_el = Math.floor(Math.random() * (numb_of_stripes - 1) + 1);
-				//console.log("new_rend",rand_el);
 				}while(rand_el != comp_el);
 			}
 	comp_el = rand_el;
@@ -198,27 +186,17 @@ function clouds_move(cloud)
 }
 function object_compare(obj1,obj2)
 {
-	// var XComp = false;
-	// var YComp = false;
-	// console.log("object_compare");
-	// console.log("object1_x:",obj1.x);
 	var rock_width = $("div.rock").width();
 	var rock_height = $("div.rock").height();
     compare = false;
 	if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height) || ((obj1.x + obj1.width >= $("div.rock").offset().left) && (obj1.x <= $("div.rock").offset().left + rock_width) && (obj1.y+obj1.height >= $("div.rock").offset().top) && (obj1.y <= $("div.rock").offset().top + rock_height))) 
 		{
-			//alert("yes");
-			console.log("yes");
 			compare = true;
 			return compare;
 		}
 	 return {compare:compare};
 }
 function fall_down(compare){
-	console.log(compare);
-	// console.log("object1_y:",obj1.y);
-	// console.log("wind_height:",wind_height);
-	// console.log("scrumpy_height:",scrampy.height());
 	current_pos = scrampy.offset().top+scrampy.height();
 	distance_to_fall = wind_height - current_pos;
 	console.log("current_pos",current_pos);
@@ -235,10 +213,6 @@ function fall_down(compare){
 }
 function navigation(){
 		$(window).keydown(function key_pressed(e){
-		////console.log("code:",e.keyCode);
-		////console.log("step:",step);
-		console.log("obj1.y:",scrampy.offset().top);
-		console.log("obj1.x:",scrampy.offset().left);
 		var current_pos = scrampy.offset().top+scrampy.height();
 		var step = current_pos - 250;
 		console.log(step);
@@ -246,17 +220,6 @@ function navigation(){
 				//пробел 
 				case 32:
 				{
-					// $("#scrumpy").addClass("animate");
-					// $("#scrumpy").addClass("flip");
-					// if(step >= (wind_width-$("#scrumpy").width()))
-					// {
-					// 	step = wind_width-$("#scrumpy").width();	
-					// }
-					// else
-					// {
-					// 	step=step+10;
-					// }
-				//	$("#scrumpy").css({"margin-top":obj1.y -140+"px","margin-left":step+"px"});
 					$("#scrumpy").css({"top":step+"px"});
 					scrampy.offset().top = step;
 				}
