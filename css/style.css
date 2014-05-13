@@ -93,17 +93,23 @@ body {
   bottom: 0;
   z-index: 15;
 }
-
+.scrampy_wrapper
+{
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  z-index: 18;
+  bottom: 123px;
+  padding: 25px;
+}
 /* line 91, ../sass/_main.scss */
 #scrumpy {
-  position: absolute;
+  position: relative;
   width: 100px;
   height: 101px;
-  top: 380px;
   z-index: 18;
-  margin-left: 178px;
- /* margin-top: 0px;*/
-  bottom: 272px;
+  margin: 0 auto;
+  padding-top: 25px;
 }
 
 /* line 101, ../sass/_main.scss */
@@ -126,21 +132,22 @@ body {
 .clouds {
   position: relative;
   width: 100%;
+  height: 75px;
 }
 
 /* line 120, ../sass/_main.scss */
 .cloud {
   position: absolute;
-  right: -100px;
+  right: -150px;
   display: inline-block;
   min-width: 100px;
   height: 100%;
+  min-height: 75px;
   background-image: url(../img/clouds/cloud_1.png);
   background-position: center top;
   background-repeat: no-repeat;
   margin-left: 20px;
 }
-
 /* line 132, ../sass/_main.scss */
 .flip {
   -webkit-transform: rotateZ(360deg);

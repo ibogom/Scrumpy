@@ -21,6 +21,7 @@ $(document).ready(function(e) {
   	fall_down(compare);
   });
   },10);
+    	// navigation();
 });
 function game_settings()
 {
@@ -226,26 +227,27 @@ function navigation(){
 				break;
 				//стрелка вправо
 				case 39:
-					if(step >= (wind_width-$("#scrumpy").width()))
-					{
-						step = wind_width-$("#scrumpy").width();	
-					}
-					else
-					{
+					// if(step >= (wind_width-$("#scrumpy").width()))
+					// {
+					// 	step = wind_width-$("#scrumpy").width();	
+					// }
+					// else
+					// {
 						step=step+10;
-					}
+					// }
 					$("#scrumpy").css({"margin-left":step+"px"});
 				break;
 				//стрелка влево
 				case 37:
-					if(step <= (wind_width - wind_width-$("#scrumpy").width()+100))
-					{
-						step =wind_width - wind_width-$("#scrumpy").width()+100;						
-					}
-					else
-					{
+					// if(step <= (wind_width - wind_width-$("#scrumpy").width()+100))
+					// {
+					// 	step=step-10;
+					// 	step =wind_width - wind_width-$("#scrumpy").width()+100;						
+					// }
+					// else
+					// {
 						step=step-10;
-					}
+					// }
 					$("#scrumpy").css({"margin-left":step+"px"});
 				break;
 			}

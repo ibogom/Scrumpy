@@ -2,18 +2,22 @@ $(document).ready(function() {
 	 set_default = function(){
 		var seconds = 0;
 		var minutes = 0;
-		var speed = 1500;
+		var speed = 6500;
 		var cloud_id = 0;
-		var comp_el = 0;
+		// var comp_el = 0;
 		setInterval(function(){
 			seconds++;
+				if(seconds%60 === 0)
+				{
+					minutes=minutes+1;
+					seconds = 0;
+					if(speed >= 2750) {
+					speed = speed-250;
+					} else {
+						speed = 2500;
+					}
+				}
 		},1000);
-		if(seconds%60 === 0)
-		{
-			minutes++;
-			seconds = 0;
-			speed = speed+1000;
-		}
 		var stripe_height = 75;
 		var wind_width = $(".obstacles_wrapper").width();
 		var wind_height = $(document).height();
@@ -56,13 +60,13 @@ $(document).ready(function() {
 		}();
 		return {
 			set : function(set_default){
-				set_default.seconds = seconds;
-				set_default.minutes = minutes;
-				set_default.speed = speed;
-				set_default.wind_height = wind_height;
-				set_default.wind_width = wind_width;
-				set_default.cloud_id = cloud_id; 
-				set_default.comp_el = comp_el;
+			    seconds = set_default.seconds;
+				minutes = set_default.minutes;
+				speed = set_default.speed;
+				wind_height = set_default.wind_height;
+				wind_width = set_default.wind_width;
+				cloud_id = set_default.cloud_id; 
+				// set_default.comp_el = comp_el;
 			},
 			get : function(){
 				return {
@@ -71,7 +75,8 @@ $(document).ready(function() {
 				wind_height : wind_height,
 				wind_width : wind_width,
 				cloud_id : cloud_id,
-				comp_el : comp_el
+				speed: speed
+				// comp_el : comp_el
 				}
 			},
 			cloud_id_ink: function() {
@@ -93,50 +98,47 @@ $(document).ready(function() {
 				x: object_init.offset().left,
 				y: object_init.offset().top
 		 	};
-	        // object_move(object_return);
 	    }
 	    return object_return;
 	};
 //compare two objects "scrampy and cloud"
 	objects_compare = function (obj1,obj2){
-		var rock_width = $("div.rock").width();
-		var rock_height = $("div.rock").height();
-	    var compare = false;
-		if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height) || ((obj1.x + obj1.width >= $("div.rock").offset().left) && (obj1.x <= $("div.rock").offset().left + rock_width) && (obj1.y+obj1.height >= $("div.rock").offset().top) && (obj1.y <= $("div.rock").offset().top + rock_height))) {
-				compare = true;
+		// var rock_width = $("div.rock").width();
+		// var rock_height = $("div.rock").height();
+		if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height)) {
+				console.log("yes");
+				return true;
 		}
-		return {compare:compare};
+		return false;
 	};
 //function that add clouds 
 	cloud_add = function (){
 		var new_id = set_default.cloud_id_ink().cloud_id;
-		console.log(new_id);
-		var get_comp_el = set_default.get().comp_el;
-		//var cloud = $("div#cloud_id_"+new_id);
 		var rand_el =  Math.floor(Math.random() * (set_default.numb_of_stripes - 1) + 1);
-		if (get_comp_el == 0){
-			set_default.set({comp_el:Math.floor(Math.random() * (set_default.numb_of_stripes - 1) + 1)});
-		}
-		else if (get_comp_el == rand_el){
-			do {
-			rand_el = Math.floor(Math.random() * (set_default.numb_of_stripes - 1) + 1);
-			} while(rand_el != get_comp_el);
-		}
-		set_default.set({comp_el:rand_el});
-		$("#clouds_id_"+get_comp_el).append("<div class='cloud' id='cloud_id_"+new_id+"'></div>");
+		$("#clouds_id_"+rand_el).append("<figure class='cloud' id='cloud_id_"+new_id+"'></figure>");
+		var cloud = $("#cloud_id_"+new_id);
+		cloud.animate({right:set_default.get().wind_width+"px"}, {
+				duration:set_default.get().speed,
+				complete:function(){
+					cloud.remove();
+				}
+	});
 	};
-//check object move 
-	object_move = function (object){
-		last_object_X = object.x;
-		last_object_Y = object.y;
-		setInterval(function () {
-			new_object_X = last_object_X;
-			new_object_Y = last_object_Y;
-		},10);
-		if (last_object_X != new_object_X || last_object_Y != new_object_Y) {
-			return true;
-		}
-		return false;
+//Add clouds with interval 500 ms
+	setInterval(cloud_add,500);
+//compare 2 objects on intersaction 
+	setInterval(function(){
+	$("figure.cloud").each(function(){
+		var obj1 = object_check(set_default.scrampy);
+		var obj2 = object_check($(this));
+		objects_compare(obj1,obj2);
+	});
+	},10);
+	navigation = function(){
+		
 	};
+	
+	fall_down = function(obj1){
 
+	 };
 });
