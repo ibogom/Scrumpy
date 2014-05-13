@@ -1,14 +1,13 @@
 $(document).ready(function() {
-	 set_default = function(){
+	set_default = function(){
 		var seconds = 0;
 		var minutes = 0;
 		var speed = 6500;
 		var cloud_id = 0;
 		// var comp_el = 0;
-		setInterval(function(){
+		setInterval(function() {
 			seconds++;
-				if(seconds%60 === 0)
-				{
+				if(seconds%60 === 0) {
 					minutes=minutes+1;
 					seconds = 0;
 					if(speed >= 2750) {
@@ -24,7 +23,7 @@ $(document).ready(function() {
 		var cloud_height = $("div.clouds").height(stripe_height);
 		var scrampy = $("#scrumpy");
 		$(".wrapper").height(wind_height);
-		var stripes_count = function(){
+		var stripes_count = function() {
 			if(wind_height < 600){
 				numb_of_stripes = 6;
 			}
@@ -54,7 +53,7 @@ $(document).ready(function() {
 			$("div.obstacles_wrapper").css({"padding-top":obstacles_wrapper_padding+"px"});
 			$("div.obstacles_wrapper").css({"padding-bottom":obstacles_wrapper_padding+"px"});
 			$("div.obstacles_wrapper").height(obstacles_wrapper_height);
-			for(var i=1; i<=numb_of_stripes; i++){
+			for(var i=1; i<=numb_of_stripes; i++) {
 				$("div.obstacles_wrapper").append("<div class='clouds' id='clouds_id_"+i+"'></div>");
 			}
 		}();
@@ -101,15 +100,30 @@ $(document).ready(function() {
 	    }
 	    return object_return;
 	};
+//fall down function
+	fall_down = function(){
+		var scrampy = set_default.scrampy;
+		var scr_top = object_check(set_default.scrampy).y;
+		var scr_left = object_check(set_default.scrampy).x;
+		var step = 0;
+		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
+		step = scr_top +50;
+		// console.log(step);
+		set_default.scrampy.css({"top":step+"px"});
+		}
+	};
 //compare two objects "scrampy and cloud"
 	objects_compare = function (obj1,obj2){
-		// var rock_width = $("div.rock").width();
-		// var rock_height = $("div.rock").height();
-		if((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height)) {
-				console.log("yes");
-				return true;
-		}
-		return false;
+		var rock_width = $("div.rock").width();
+		var rock_height = $("div.rock").height();
+		var rock_x =  $("div.rock").offset().left;
+		var rock_y =  $("div.rock").offset().top;
+		// console.log(rock_y);
+		if(((obj1.x+obj1.width >= rock_x) && (obj1.x <= rock_x + (rock_width-50)) && (obj1.y+rock_height >= rock_y) && (obj1.y <= rock_y + rock_height)) || ((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height))) {
+				
+		} else {
+		  fall_down();
+		  }
 	};
 //function that add clouds 
 	cloud_add = function (){
@@ -122,23 +136,43 @@ $(document).ready(function() {
 				complete:function(){
 					cloud.remove();
 				}
-	});
+		});
+	};
+	navigation = function(){
+		var scrampy = object_check(set_default.scrampy);
+		var scr_top = scrampy.y;
+		var scr_left = scrampy.x;
+		$("div.wrapper").on("mousedown", function(e){
+			// set_default.scrampy.addClass("animate");
+			if(e.button == 0 ) {
+				if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
+					scr_top = scr_top-300;
+					scr_left = scr_left -90;
+					set_default.scrampy.css({"left":scr_left+"px"});
+					set_default.scrampy.css({"top":scr_top+"px"});
+					}
+			} else {
+				if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
+					scr_top = scr_top-300;
+					scr_left = scr_left +10;
+					set_default.scrampy.css({"left":scr_left+"px"});
+					set_default.scrampy.css({"top":scr_top+"px"});
+					}
+			}
+		});
+		$("div.wrapper").on("mouseup" , function(){
+			// set_default.scrampy.removeClass("animate");
+		});
 	};
 //Add clouds with interval 500 ms
 	setInterval(cloud_add,500);
 //compare 2 objects on intersaction 
 	setInterval(function(){
+	navigation();
 	$("figure.cloud").each(function(){
 		var obj1 = object_check(set_default.scrampy);
 		var obj2 = object_check($(this));
 		objects_compare(obj1,obj2);
-	});
+		});
 	},10);
-	navigation = function(){
-		
-	};
-	
-	fall_down = function(obj1){
-
-	 };
 });
