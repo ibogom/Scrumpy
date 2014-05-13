@@ -93,31 +93,22 @@ body {
   bottom: 0;
   z-index: 15;
 }
-.scrampy_wrapper
-{
-  width: 150px;
-  height: 150px;
-  position: absolute;
-  z-index: 18;
-  bottom: 123px;
-  padding: 25px;
-}
+
 /* line 91, ../sass/_main.scss */
 #scrumpy {
-  position: relative;
+  position: absolute;
   width: 100px;
   height: 101px;
+  bottom: 155px;
   z-index: 18;
-  margin: 0 auto;
-  padding-top: 25px;
 }
 
 /* line 101, ../sass/_main.scss */
 .animate {
-  transition-duration: 0.7s !important;
-  -o-transition-duration: 0.7s !important;
-  -webkit-transition-duration: 0.7s !important;
-  -moz-transition-duration: 0.7s !important;
+  transition-duration: 0.3s !important;
+  -o-transition-duration: 0.3s !important;
+  -webkit-transition-duration: 0.3s !important;
+  -moz-transition-duration: 0.3s !important;
 }
 
 /* line 108, ../sass/_main.scss */
