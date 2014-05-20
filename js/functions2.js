@@ -114,7 +114,27 @@ $(document).ready(function() {
 		var rock_height = $("div.rock").height();
 		var rock_x =  $("div.rock").offset().left;
 		var rock_y =  $("div.rock").offset().top;
-		if(((obj1.x+obj1.width >= rock_x) && (obj1.x <= rock_x + (rock_width-40)) && (obj1.y+obj1.height >= rock_y - 60) && (obj1.y <= rock_y + rock_height)) || ((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + (obj2.width)) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height))){
+        var scrumpty_geometrical_center = {
+            x: (obj1.x + obj1.width) / 2,
+            y: (obj1.y + obj1.height) / 2
+        };
+        var cloud_geometrical_center = {
+            x: (obj2.x + obj2.width) / 2,
+            y: (obj2.y + obj2.height) / 2
+        };
+        var CONTACT_OFFSET = {
+            x: (obj2.width / 2), /* half of a cloud width */
+            y: (obj2.height / 2) /* half of a cloud width */
+            //y: 10
+        };
+        /*
+         *var scrampy_bottom = obj1.y;
+         *var cloud_top = obj2.y + obj2.height;
+         *var is_scrumpy_on_cloud = (Math.abs(scrumpty_geometrical_center.x - cloud_geometrical_center.x) < CONTACT_OFFSET.x) && (Math(scrampy_bottom - cloud_top) < CONTACT_OFFSET.y);
+         */
+        var is_scrumpy_on_cloud = (Math.abs(scrumpty_geometrical_center.x - cloud_geometrical_center.x) < CONTACT_OFFSET.x)
+                                  && (Math.abs(scrumpty_geometrical_center.y - cloud_geometrical_center.y) < CONTACT_OFFSET.y);
+		if(((obj1.x+obj1.width >= rock_x) && (obj1.x <= rock_x + (rock_width-40)) && (obj1.y+obj1.height >= rock_y - 60) && (obj1.y <= rock_y + rock_height)) || is_scrumpy_on_cloud){
 				 console.log("yes");
 		} else {
 		   fall_down();
@@ -175,7 +195,9 @@ $(document).ready(function() {
 	$("figure.cloud").each(function(){
 		//obj1 - scrampy
 		var obj1 = object_check(set_default.scrampy);
+        set_default.scrampy.css('background-color', 'red');
 		//obj2 - cloud 
+        $(this).css('background-color', 'red');
 		var obj2 = object_check($(this));
 		objects_compare(obj1,obj2);
 		});
