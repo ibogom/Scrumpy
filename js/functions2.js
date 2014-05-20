@@ -2,9 +2,8 @@ $(document).ready(function() {
 	set_default = function(){
 		var seconds = 0;
 		var minutes = 0;
-		var speed = 6500;
+		var speed = 8500;
 		var cloud_id = 0;
-		// var comp_el = 0;
 		setInterval(function() {
 			seconds++;
 				if(seconds%60 === 0) {
@@ -27,25 +26,25 @@ $(document).ready(function() {
 			if(wind_height < 600){
 				numb_of_stripes = 6;
 			}
-			else if(wind_height > 600){
-				numb_of_stripes = 7;
+			if(wind_height > 600){
+				numb_of_stripes = 8;
 			}
-			else if(wind_height > 700){
+			if(wind_height > 700){
 				numb_of_stripes = 9;
 			}
-			else if(wind_height >800){
+			if(wind_height >800){
 				numb_of_stripes = 10;
 			}
-			else if(wind_height >900){
+			if(wind_height >900){
 				numb_of_stripes = 12;
 			}
-			else if(wind_height >1000){
+			if(wind_height >1000){
 				numb_of_stripes = 13;
 			}
-			else if(wind_height >1100){
+			if(wind_height >1100){
 				numb_of_stripes = 14;
 			}
-			else if(wind_height >1200){
+			if(wind_height >1200){
 				numb_of_stripes = 16;
 			}
 			var obstacles_wrapper_height = numb_of_stripes*stripe_height;
@@ -65,7 +64,6 @@ $(document).ready(function() {
 				wind_height = set_default.wind_height;
 				wind_width = set_default.wind_width;
 				cloud_id = set_default.cloud_id; 
-				// set_default.comp_el = comp_el;
 			},
 			get : function(){
 				return {
@@ -75,7 +73,6 @@ $(document).ready(function() {
 				wind_width : wind_width,
 				cloud_id : cloud_id,
 				speed: speed
-				// comp_el : comp_el
 				}
 			},
 			cloud_id_ink: function() {
@@ -108,7 +105,6 @@ $(document).ready(function() {
 		var step = 0;
 		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
 		step = scr_top +50;
-		// console.log(step);
 		set_default.scrampy.css({"top":step+"px"});
 		}
 	};
@@ -118,12 +114,11 @@ $(document).ready(function() {
 		var rock_height = $("div.rock").height();
 		var rock_x =  $("div.rock").offset().left;
 		var rock_y =  $("div.rock").offset().top;
-		// console.log(rock_y);
-		if(((obj1.x+obj1.width >= rock_x) && (obj1.x <= rock_x + (rock_width-50)) && (obj1.y+rock_height >= rock_y) && (obj1.y <= rock_y + rock_height)) || ((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + obj2.width) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height))) {
-				
+		if(((obj1.x+obj1.width >= rock_x) && (obj1.x <= rock_x + (rock_width-40)) && (obj1.y+obj1.height >= rock_y - 60) && (obj1.y <= rock_y + rock_height)) || ((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + (obj2.width)) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height))){
+				 console.log("yes");
 		} else {
-		  fall_down();
-		  }
+		   fall_down();
+		}
 	};
 //function that add clouds 
 	cloud_add = function (){
@@ -138,30 +133,38 @@ $(document).ready(function() {
 				}
 		});
 	};
+//navigation 
 	navigation = function(){
 		var scrampy = object_check(set_default.scrampy);
 		var scr_top = scrampy.y;
 		var scr_left = scrampy.x;
-		$("div.wrapper").on("mousedown", function(e){
-			// set_default.scrampy.addClass("animate");
-			if(e.button == 0 ) {
-				if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
-					scr_top = scr_top-300;
-					scr_left = scr_left -90;
-					set_default.scrampy.css({"left":scr_left+"px"});
-					set_default.scrampy.css({"top":scr_top+"px"});
-					}
-			} else {
-				if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
-					scr_top = scr_top-300;
+		var scr = set_default.scrampy;
+		set_default.scrampy.addClass("animate");
+		$(document).keyup(function(e){
+			switch(e.keyCode)
+			{
+				//space
+				case 32:
+				{
+					scr_top = scr_top -250;
 					scr_left = scr_left +10;
-					set_default.scrampy.css({"left":scr_left+"px"});
-					set_default.scrampy.css({"top":scr_top+"px"});
-					}
+					scr.css({"top":scr_top});
+					scr.css({"left":scr_left});
+				}break;
+				//left
+				case 37: 
+				{
+					scr_left = scr_left -90;
+					scr.css({"left":scr_left});
+				}
+				//right
+				case 39:
+				{
+					scr_left = scr_left +10;
+					scr.css({"left":scr_left});
+				} 
+
 			}
-		});
-		$("div.wrapper").on("mouseup" , function(){
-			// set_default.scrampy.removeClass("animate");
 		});
 	};
 //Add clouds with interval 500 ms
@@ -170,9 +173,11 @@ $(document).ready(function() {
 	setInterval(function(){
 	navigation();
 	$("figure.cloud").each(function(){
+		//obj1 - scrampy
 		var obj1 = object_check(set_default.scrampy);
+		//obj2 - cloud 
 		var obj2 = object_check($(this));
 		objects_compare(obj1,obj2);
 		});
-	},10);
+	},100);
 });
