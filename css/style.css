@@ -99,8 +99,10 @@ body {
   position: absolute;
   width: 100px;
   height: 101px;
-  bottom: 155px;
+  bottom: 175px;
   z-index: 18;
+  margin-bottom: 0;
+  padding-bottom: 0
 }
 
 /* line 101, ../sass/_main.scss */
