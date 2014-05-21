@@ -57,14 +57,6 @@ $(document).ready(function() {
 			}
 		}();
 		return {
-			set : function(set_default){
-			    seconds = set_default.seconds;
-				minutes = set_default.minutes;
-				speed = set_default.speed;
-				wind_height = set_default.wind_height;
-				wind_width = set_default.wind_width;
-				cloud_id = set_default.cloud_id; 
-			},
 			get : function(){
 				return {
 				seconds : seconds,
@@ -86,42 +78,46 @@ $(document).ready(function() {
 		}
 	}();
 //new object create
-	object_check = function (object_init){
-	    if (typeof object_init !== undefined){
-		    object_return = {
-				width: object_init.width(),
-				height: object_init.height(),
-				x: object_init.offset().left,
-				y: object_init.offset().top
-		 	};
-	    }
-	    return object_return;
-	};
-//fall down function
-	fall_down = function(){
-		var scrampy = set_default.scrampy;
-		var scr_top = object_check(set_default.scrampy).y;
-		var scr_left = object_check(set_default.scrampy).x;
-		var step = 0;
-		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
-		step = scr_top +50;
-		set_default.scrampy.css({"top":step+"px"});
-		}
-	};
-//compare two objects "scrampy and cloud"
-	objects_compare = function (obj1,obj2){
-		var rock_width = $("div.rock").width();
-		var rock_height = $("div.rock").height();
-		var rock_x =  $("div.rock").offset().left;
-		var rock_y =  $("div.rock").offset().top;
-		if(((obj1.x+obj1.width >= rock_x) && (obj1.x <= rock_x + (rock_width-40)) && (obj1.y+obj1.height >= rock_y - 60) && (obj1.y <= rock_y + rock_height)) || ((obj1.x+obj1.width >= obj2.x) && (obj1.x <= obj2.x + (obj2.width)) && (obj1.y+obj1.height >= obj2.y) && (obj1.y <= obj2.y + obj2.height))){
-				 console.log("yes");
-		} else {
-		   fall_down();
-		}
-	};
+	function calculateBoundingBox(object_init){
+        return {
+            width: object_init.width(),
+            height: object_init.height(),
+            left: object_init.offset().left,
+            right: object_init.offset().left + object_init.width(),
+            bottom: object_init.offset().top,
+            top: object_init.offset().top + object_init.height()
+        }
+	}
+    // position predicates
+    function isScrampyAtRock() {
+        var rock_bounding_box = calculateBoundingBox($('div.rock'));
+        var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
+
+        return (scrampy_bounding_box.right >= rock_bounding_box.left) && (scrampy_bounding_box.left <= rock_bounding_box.right - 40)
+               && (scrampy_bounding_box.top >= rock_bounding_box.bottom - 60) && (scrampy_bounding_box.bottom <= rock_bounding_box.top);
+    }
+
+    function isScrampyAtCloud(cloud) {
+        var cloud_bounding_box = calculateBoundingBox(cloud);
+        var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
+        var scrumpty_geometrical_center = {
+            x: (scrampy_bounding_box.right) / 2,
+            y: (scrampy_bounding_box.top) / 2
+        };
+        var cloud_geometrical_center = {
+            x: (cloud_bounding_box.right) / 2,
+            y: (cloud_bounding_box.top) / 2
+        };
+        var CONTACT_OFFSET = {
+            x: (cloud_bounding_box.width / 2),
+            y: (cloud_bounding_box.height / 2)
+        };
+        return (Math.abs(scrumpty_geometrical_center.x - cloud_geometrical_center.x) < CONTACT_OFFSET.x)
+               && (Math.abs(scrumpty_geometrical_center.y - cloud_geometrical_center.y) < CONTACT_OFFSET.y);
+    }
+
 //function that add clouds 
-	cloud_add = function (){
+	function cloud_add (){
 		var new_id = set_default.cloud_id_ink().cloud_id;
 		var rand_el =  Math.floor(Math.random() * (set_default.numb_of_stripes - 1) + 1);
 		$("#clouds_id_"+rand_el).append("<figure class='cloud' id='cloud_id_"+new_id+"'></figure>");
@@ -133,51 +129,85 @@ $(document).ready(function() {
 				}
 		});
 	};
-//navigation 
-	navigation = function(){
-		var scrampy = object_check(set_default.scrampy);
-		var scr_top = scrampy.y;
-		var scr_left = scrampy.x;
-		var scr = set_default.scrampy;
-		set_default.scrampy.addClass("animate");
-		$(document).keyup(function(e){
-			switch(e.keyCode)
-			{
-				//space
-				case 32:
-				{
-					scr_top = scr_top -250;
-					scr_left = scr_left +10;
-					scr.css({"top":scr_top});
-					scr.css({"left":scr_left});
-				}break;
-				//left
-				case 37: 
-				{
-					scr_left = scr_left -90;
-					scr.css({"left":scr_left});
-				}
-				//right
-				case 39:
-				{
-					scr_left = scr_left +10;
-					scr.css({"left":scr_left});
-				} 
+    // move action predicates
+    function isSpaceKey(event) {
+        return event.keyCode === 32;
+    }
 
-			}
-		});
-	};
+    function isLeftArrowKey(event) {
+        return event.keyCode === 37;
+    }
+
+    function isRightArrowKey(event) {
+        return event.keyCode === 39;
+    }
+
+    function isMoveActionKey(event) {
+        return isSpaceKey(event) || isLeftArrowKey(event) || isRightArrowKey(event);
+    }
+
+    // move actions 
+    function jumpAction() {
+		var bounding_box = calculateBoundingBox(set_default.scrampy);
+        set_default.scrampy.css({'top': bounding_box.bottom - 250, 'left': bounding_box.left + 10});
+    }
+
+    function moveLeftAction() {
+		var bounding_box = calculateBoundingBox(set_default.scrampy);
+        set_default.scrampy.css({'left': bounding_box.left - 90});
+    }
+
+    function moveRightAction() {
+		var bounding_box = calculateBoundingBox(set_default.scrampy);
+        set_default.scrampy.css({'left': bounding_box.left + 10});
+    }
+
+    var keyupEventStream = $(document).asEventStream('keyup');
+    var controlKeyEventStream = keyupEventStream.filter(isMoveActionKey);
+    keyupEventStream.filter(isSpaceKey).onValue(jumpAction);
+    keyupEventStream.filter(isLeftArrowKey).onValue(moveLeftAction);
+    keyupEventStream.filter(isRightArrowKey).onValue(moveRightAction);
+
+    function nop() {
+    }
+    
 //Add clouds with interval 500 ms
 	setInterval(cloud_add,500);
 //compare 2 objects on intersaction 
-	setInterval(function(){
-	navigation();
-	$("figure.cloud").each(function(){
-		//obj1 - scrampy
-		var obj1 = object_check(set_default.scrampy);
-		//obj2 - cloud 
-		var obj2 = object_check($(this));
-		objects_compare(obj1,obj2);
-		});
-	},100);
+    var cloudEventStream = Bacon.fromBinder(function(sink) {
+        setInterval(function() {
+            $("figure.cloud").each(function(){
+                sink(new Bacon.Next($(this)));
+            });
+
+            return nop;
+        }, 100);
+    });
+
+    // collision predicates
+	function isScrampyCollide (obj2) {
+		return isScrampyAtRock() || isScrampyAtCloud(obj2);
+	}
+
+    function isScrampyNotCollide(obj) {
+        return !isScrampyCollide(obj);
+    }
+
+    // collision actions
+	function fall_down () {
+		var scrampy = set_default.scrampy;
+		var scr_top = calculateBoundingBox(set_default.scrampy).bottom;
+		var scr_left = calculateBoundingBox(set_default.scrampy).left;
+		var step = 0;
+		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
+            step = scr_top +50;
+            set_default.scrampy.css({"top":step+"px"});
+		}
+	}
+
+    cloudEventStream.filter(isScrampyNotCollide).onValue(fall_down);
+    cloudEventStream.filter(isScrampyAtCloud).onValue(function(cloud) {
+        var bounding_box = calculateBoundingBox(cloud);
+        set_default.scrampy.offset({'left': bounding_box.left, 'top': set_default.scrampy.height() - bounding_box.top}); // change to correct values 
+    });
 });
