@@ -86,17 +86,14 @@ $(document).ready(function() {
 		}
 	}();
 //new object create
-	calculateBoundingBox = function (object_init){
-	    if (typeof object_init !== undefined){
-		    object_return = {
-				width: object_init.width(),
-				height: object_init.height(),
-				x: object_init.offset().left,
-				y: object_init.offset().top
-		 	};
-	    }
-	    return object_return;
-	};
+	function calculateBoundingBox(object_init){
+        return {
+            width: object_init.width(),
+            height: object_init.height(),
+            x: object_init.offset().left,
+            y: object_init.offset().top
+        }
+	}
 //fall down function
 	fall_down = function(){
 		var scrampy = set_default.scrampy;
