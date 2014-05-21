@@ -101,18 +101,8 @@ $(document).ready(function() {
         var rock_bounding_box = calculateBoundingBox($('div.rock'));
         var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
 
-        var scrampy_left_side = scrampy_bounding_box.left;
-        var scrampy_right_side = scrampy_bounding_box.right;
-        var scrampy_bottom_side = scrampy_bounding_box.bottom;
-        var scrampy_top_side = scrampy_bounding_box.top;
-
-        var rock_left_side = rock_bounding_box.left;
-        var rock_right_side = rock_bounding_box.right;
-        var rock_bottom_side = rock_bounding_box.bottom;
-        var rock_top_side = rock_bounding_box.top;
-
-        return (scrampy_right_side >= rock_left_side) && (scrampy_left_side <= rock_right_side - 40)
-               && (scrampy_top_side >= rock_bottom_side - 60) && (scrampy_bottom_side <= rock_top_side);
+        return (scrampy_bounding_box.right >= rock_bounding_box.left) && (scrampy_bounding_box.left <= rock_bounding_box.right - 40)
+               && (scrampy_bounding_box.top >= rock_bounding_box.bottom - 60) && (scrampy_bounding_box.bottom <= rock_bounding_box.top);
     }
 
     function isScrampyAtCloud(cloud) {
