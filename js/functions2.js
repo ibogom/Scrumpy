@@ -94,7 +94,43 @@ $(document).ready(function() {
             y: object_init.offset().top
         }
 	}
-//fall down function
+    // position predicates
+    function isScrampyAtRock() {
+        var rock_bounding_box = calculateBoundingBox($('div.rock'));
+        var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
+
+        var scrampy_left_side = scrampy_bounding_box.x;
+        var scrampy_right_side = scrampy_bounding_box.x + scrampy_bounding_box.width;
+        var scrampy_bottom_side = scrampy_bounding_box.y;
+        var scrampy_top_side = scrampy_bounding_box.y + scrampy_bounding_box.height;
+
+        var rock_left_side = rock_bounding_box.x;
+        var rock_right_side = rock_bounding_box.x + rock_bounding_box.width;
+        var rock_bottom_side = rock_bounding_box.y;
+        var rock_top_side = rock_bounding_box.y + rock_bounding_box.height;
+
+        return (scrampy_right_side >= rock_left_side) && (scrampy_left_side <= rock_right_side - 40)
+               && (scrampy_top_side >= rock_bottom_side - 60) && (scrampy_bottom_side <= rock_top_side);
+    }
+
+    function isScrampyAtCloud(cloud) {
+        var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
+        var scrumpty_geometrical_center = {
+            x: (scrampy_bounding_box.x + scrampy_bounding_box.width) / 2,
+            y: (scrampy_bounding_box.y + scrampy_bounding_box.height) / 2
+        };
+        var cloud_geometrical_center = {
+            x: (cloud.x + cloud.width) / 2,
+            y: (cloud.y + cloud.height) / 2
+        };
+        var CONTACT_OFFSET = {
+            x: (cloud.width / 2),
+            y: (cloud.height / 2)
+        };
+        return (Math.abs(scrumpty_geometrical_center.x - cloud_geometrical_center.x) < CONTACT_OFFSET.x)
+               && (Math.abs(scrumpty_geometrical_center.y - cloud_geometrical_center.y) < CONTACT_OFFSET.y);
+    }
+
 	fall_down = function(){
 		var scrampy = set_default.scrampy;
 		var scr_top = calculateBoundingBox(set_default.scrampy).y;
@@ -107,31 +143,7 @@ $(document).ready(function() {
 	};
 //compare two objects "scrampy and cloud"
 	objects_compare = function (obj1,obj2){
-		var rock_width = $("div.rock").width();
-		var rock_height = $("div.rock").height();
-		var rock_x =  $("div.rock").offset().left;
-		var rock_y =  $("div.rock").offset().top;
-        var scrumpty_geometrical_center = {
-            x: (obj1.x + obj1.width) / 2,
-            y: (obj1.y + obj1.height) / 2
-        };
-        var cloud_geometrical_center = {
-            x: (obj2.x + obj2.width) / 2,
-            y: (obj2.y + obj2.height) / 2
-        };
-        var CONTACT_OFFSET = {
-            x: (obj2.width / 2), /* half of a cloud width */
-            y: (obj2.height / 2) /* half of a cloud width */
-            //y: 10
-        };
-        /*
-         *var scrampy_bottom = obj1.y;
-         *var cloud_top = obj2.y + obj2.height;
-         *var is_scrumpy_on_cloud = (Math.abs(scrumpty_geometrical_center.x - cloud_geometrical_center.x) < CONTACT_OFFSET.x) && (Math(scrampy_bottom - cloud_top) < CONTACT_OFFSET.y);
-         */
-        var is_scrumpy_on_cloud = (Math.abs(scrumpty_geometrical_center.x - cloud_geometrical_center.x) < CONTACT_OFFSET.x)
-                                  && (Math.abs(scrumpty_geometrical_center.y - cloud_geometrical_center.y) < CONTACT_OFFSET.y);
-		if(((obj1.x+obj1.width >= rock_x) && (obj1.x <= rock_x + (rock_width-40)) && (obj1.y+obj1.height >= rock_y - 60) && (obj1.y <= rock_y + rock_height)) || is_scrumpy_on_cloud){
+		if(isScrampyAtRock() || isScrampyAtCloud(obj2)){
 				 console.log("yes");
 		} else {
 		   fall_down();
