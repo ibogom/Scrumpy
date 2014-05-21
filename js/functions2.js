@@ -208,6 +208,6 @@ $(document).ready(function() {
     cloudEventStream.filter(isScrampyNotCollide).onValue(fall_down);
     cloudEventStream.filter(isScrampyAtCloud).onValue(function(cloud) {
         var bounding_box = calculateBoundingBox(cloud);
-        set_default.scrampy.css({'left': bounding_box.left, 'bottom': bounding_box.top});
+        set_default.scrampy.offset({'left': bounding_box.left, 'top': set_default.scrampy.height() - bounding_box.top}); // change to correct values 
     });
 });
