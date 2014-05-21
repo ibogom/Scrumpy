@@ -91,7 +91,9 @@ $(document).ready(function() {
             width: object_init.width(),
             height: object_init.height(),
             left: object_init.offset().left,
-            bottom: object_init.offset().top
+            right: object_init.offset().left + object_init.width(),
+            bottom: object_init.offset().top,
+            top: object_init.offset().top + object_init.height()
         }
 	}
     // position predicates
@@ -100,14 +102,14 @@ $(document).ready(function() {
         var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
 
         var scrampy_left_side = scrampy_bounding_box.left;
-        var scrampy_right_side = scrampy_bounding_box.left + scrampy_bounding_box.width;
+        var scrampy_right_side = scrampy_bounding_box.right;
         var scrampy_bottom_side = scrampy_bounding_box.bottom;
-        var scrampy_top_side = scrampy_bounding_box.bottom + scrampy_bounding_box.height;
+        var scrampy_top_side = scrampy_bounding_box.top;
 
         var rock_left_side = rock_bounding_box.left;
-        var rock_right_side = rock_bounding_box.left + rock_bounding_box.width;
+        var rock_right_side = rock_bounding_box.right;
         var rock_bottom_side = rock_bounding_box.bottom;
-        var rock_top_side = rock_bounding_box.bottom + rock_bounding_box.height;
+        var rock_top_side = rock_bounding_box.top;
 
         return (scrampy_right_side >= rock_left_side) && (scrampy_left_side <= rock_right_side - 40)
                && (scrampy_top_side >= rock_bottom_side - 60) && (scrampy_bottom_side <= rock_top_side);
@@ -116,12 +118,12 @@ $(document).ready(function() {
     function isScrampyAtCloud(cloud) {
         var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
         var scrumpty_geometrical_center = {
-            x: (scrampy_bounding_box.left + scrampy_bounding_box.width) / 2,
-            y: (scrampy_bounding_box.bottom + scrampy_bounding_box.height) / 2
+            x: (scrampy_bounding_box.right) / 2,
+            y: (scrampy_bounding_box.top) / 2
         };
         var cloud_geometrical_center = {
-            x: (cloud.left + cloud.width) / 2,
-            y: (cloud.bottom + cloud.height) / 2
+            x: (cloud.right) / 2,
+            y: (cloud.top) / 2
         };
         var CONTACT_OFFSET = {
             x: (cloud.width / 2),
