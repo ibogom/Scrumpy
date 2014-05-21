@@ -90,8 +90,8 @@ $(document).ready(function() {
         return {
             width: object_init.width(),
             height: object_init.height(),
-            x: object_init.offset().left,
-            y: object_init.offset().top
+            left: object_init.offset().left,
+            bottom: object_init.offset().top
         }
 	}
     // position predicates
@@ -99,15 +99,15 @@ $(document).ready(function() {
         var rock_bounding_box = calculateBoundingBox($('div.rock'));
         var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
 
-        var scrampy_left_side = scrampy_bounding_box.x;
-        var scrampy_right_side = scrampy_bounding_box.x + scrampy_bounding_box.width;
-        var scrampy_bottom_side = scrampy_bounding_box.y;
-        var scrampy_top_side = scrampy_bounding_box.y + scrampy_bounding_box.height;
+        var scrampy_left_side = scrampy_bounding_box.left;
+        var scrampy_right_side = scrampy_bounding_box.left + scrampy_bounding_box.width;
+        var scrampy_bottom_side = scrampy_bounding_box.bottom;
+        var scrampy_top_side = scrampy_bounding_box.bottom + scrampy_bounding_box.height;
 
-        var rock_left_side = rock_bounding_box.x;
-        var rock_right_side = rock_bounding_box.x + rock_bounding_box.width;
-        var rock_bottom_side = rock_bounding_box.y;
-        var rock_top_side = rock_bounding_box.y + rock_bounding_box.height;
+        var rock_left_side = rock_bounding_box.left;
+        var rock_right_side = rock_bounding_box.left + rock_bounding_box.width;
+        var rock_bottom_side = rock_bounding_box.bottom;
+        var rock_top_side = rock_bounding_box.bottom + rock_bounding_box.height;
 
         return (scrampy_right_side >= rock_left_side) && (scrampy_left_side <= rock_right_side - 40)
                && (scrampy_top_side >= rock_bottom_side - 60) && (scrampy_bottom_side <= rock_top_side);
@@ -116,12 +116,12 @@ $(document).ready(function() {
     function isScrampyAtCloud(cloud) {
         var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
         var scrumpty_geometrical_center = {
-            x: (scrampy_bounding_box.x + scrampy_bounding_box.width) / 2,
-            y: (scrampy_bounding_box.y + scrampy_bounding_box.height) / 2
+            x: (scrampy_bounding_box.left + scrampy_bounding_box.width) / 2,
+            y: (scrampy_bounding_box.bottom + scrampy_bounding_box.height) / 2
         };
         var cloud_geometrical_center = {
-            x: (cloud.x + cloud.width) / 2,
-            y: (cloud.y + cloud.height) / 2
+            x: (cloud.left + cloud.width) / 2,
+            y: (cloud.bottom + cloud.height) / 2
         };
         var CONTACT_OFFSET = {
             x: (cloud.width / 2),
@@ -133,8 +133,8 @@ $(document).ready(function() {
 
 	fall_down = function(){
 		var scrampy = set_default.scrampy;
-		var scr_top = calculateBoundingBox(set_default.scrampy).y;
-		var scr_left = calculateBoundingBox(set_default.scrampy).x;
+		var scr_top = calculateBoundingBox(set_default.scrampy).bottom;
+		var scr_left = calculateBoundingBox(set_default.scrampy).left;
 		var step = 0;
 		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
 		step = scr_top +50;
@@ -182,17 +182,17 @@ $(document).ready(function() {
     // actions 
     function jumpAction() {
 		var bounding_box = calculateBoundingBox(set_default.scrampy);
-        set_default.scrampy.css({'top': bounding_box.y - 250, 'left': bounding_box.x + 10});
+        set_default.scrampy.css({'top': bounding_box.bottom - 250, 'left': bounding_box.left + 10});
     }
 
     function moveLeftAction() {
 		var bounding_box = calculateBoundingBox(set_default.scrampy);
-        set_default.scrampy.css({'left': bounding_box.x - 90});
+        set_default.scrampy.css({'left': bounding_box.left - 90});
     }
 
     function moveRightAction() {
 		var bounding_box = calculateBoundingBox(set_default.scrampy);
-        set_default.scrampy.css({'left': bounding_box.x + 10});
+        set_default.scrampy.css({'left': bounding_box.left + 10});
     }
 
     var keyupEventStream = $(document).asEventStream('keyup');
