@@ -86,7 +86,7 @@ $(document).ready(function() {
 		}
 	}();
 //new object create
-	object_check = function (object_init){
+	calculateBoundingBox = function (object_init){
 	    if (typeof object_init !== undefined){
 		    object_return = {
 				width: object_init.width(),
@@ -100,8 +100,8 @@ $(document).ready(function() {
 //fall down function
 	fall_down = function(){
 		var scrampy = set_default.scrampy;
-		var scr_top = object_check(set_default.scrampy).y;
-		var scr_left = object_check(set_default.scrampy).x;
+		var scr_top = calculateBoundingBox(set_default.scrampy).y;
+		var scr_left = calculateBoundingBox(set_default.scrampy).x;
 		var step = 0;
 		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
 		step = scr_top +50;
@@ -141,7 +141,7 @@ $(document).ready(function() {
 		}
 	};
 //function that add clouds 
-	cloud_add = function (){
+	function cloud_add (){
 		var new_id = set_default.cloud_id_ink().cloud_id;
 		var rand_el =  Math.floor(Math.random() * (set_default.numb_of_stripes - 1) + 1);
 		$("#clouds_id_"+rand_el).append("<figure class='cloud' id='cloud_id_"+new_id+"'></figure>");
@@ -153,52 +153,55 @@ $(document).ready(function() {
 				}
 		});
 	};
-//navigation 
-	navigation = function(){
-		var scrampy = object_check(set_default.scrampy);
-		var scr_top = scrampy.y;
-		var scr_left = scrampy.x;
-		var scr = set_default.scrampy;
-		set_default.scrampy.addClass("animate");
-		$(document).keyup(function(e){
-			switch(e.keyCode)
-			{
-				//space
-				case 32:
-				{
-					scr_top = scr_top -250;
-					scr_left = scr_left +10;
-					scr.css({"top":scr_top});
-					scr.css({"left":scr_left});
-				}break;
-				//left
-				case 37: 
-				{
-					scr_left = scr_left -90;
-					scr.css({"left":scr_left});
-				}
-				//right
-				case 39:
-				{
-					scr_left = scr_left +10;
-					scr.css({"left":scr_left});
-				} 
+    // action predicates
+    function isSpaceKey(event) {
+        return event.keyCode === 32;
+    }
 
-			}
-		});
-	};
+    function isLeftArrowKey(event) {
+        return event.keyCode === 37;
+    }
+
+    function isRightArrowKey(event) {
+        return event.keyCode === 39;
+    }
+
+    function isActionKey(event) {
+        return isSpaceKey(event) || isLeftArrowKey(event) || isRightArrowKey(event);
+    }
+   
+    // actions 
+    function jumpAction() {
+		var bounding_box = calculateBoundingBox(set_default.scrampy);
+        set_default.scrampy.css({'top': bounding_box.y - 250, 'left': bounding_box.x + 10});
+    }
+
+    function moveLeftAction() {
+		var bounding_box = calculateBoundingBox(set_default.scrampy);
+        set_default.scrampy.css({'left': bounding_box.x - 90});
+    }
+
+    function moveRightAction() {
+		var bounding_box = calculateBoundingBox(set_default.scrampy);
+        set_default.scrampy.css({'left': bounding_box.x + 10});
+    }
+
+    var keyupEventStream = $(document).asEventStream('keyup');
+    keyupEventStream.filter(isSpaceKey).onValue(jumpAction);
+    keyupEventStream.filter(isLeftArrowKey).onValue(moveLeftAction);
+    keyupEventStream.filter(isRightArrowKey).onValue(moveRightAction);
+    
 //Add clouds with interval 500 ms
 	setInterval(cloud_add,500);
 //compare 2 objects on intersaction 
 	setInterval(function(){
-	navigation();
 	$("figure.cloud").each(function(){
 		//obj1 - scrampy
-		var obj1 = object_check(set_default.scrampy);
+		var obj1 = calculateBoundingBox(set_default.scrampy);
         set_default.scrampy.css('background-color', 'red');
 		//obj2 - cloud 
         $(this).css('background-color', 'red');
-		var obj2 = object_check($(this));
+		var obj2 = calculateBoundingBox($(this));
 		objects_compare(obj1,obj2);
 		});
 	},100);
