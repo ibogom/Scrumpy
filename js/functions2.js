@@ -57,14 +57,6 @@ $(document).ready(function() {
 			}
 		}();
 		return {
-			set : function(set_default){
-			    seconds = set_default.seconds;
-				minutes = set_default.minutes;
-				speed = set_default.speed;
-				wind_height = set_default.wind_height;
-				wind_width = set_default.wind_width;
-				cloud_id = set_default.cloud_id; 
-			},
 			get : function(){
 				return {
 				seconds : seconds,
@@ -137,7 +129,7 @@ $(document).ready(function() {
 				}
 		});
 	};
-    // action predicates
+    // move action predicates
     function isSpaceKey(event) {
         return event.keyCode === 32;
     }
@@ -150,11 +142,11 @@ $(document).ready(function() {
         return event.keyCode === 39;
     }
 
-    function isActionKey(event) {
+    function isMoveActionKey(event) {
         return isSpaceKey(event) || isLeftArrowKey(event) || isRightArrowKey(event);
     }
-   
-    // actions 
+
+    // move actions 
     function jumpAction() {
 		var bounding_box = calculateBoundingBox(set_default.scrampy);
         set_default.scrampy.css({'top': bounding_box.bottom - 250, 'left': bounding_box.left + 10});
@@ -171,6 +163,7 @@ $(document).ready(function() {
     }
 
     var keyupEventStream = $(document).asEventStream('keyup');
+    var controlKeyEventStream = keyupEventStream.filter(isMoveActionKey);
     keyupEventStream.filter(isSpaceKey).onValue(jumpAction);
     keyupEventStream.filter(isLeftArrowKey).onValue(moveLeftAction);
     keyupEventStream.filter(isRightArrowKey).onValue(moveRightAction);
@@ -213,7 +206,8 @@ $(document).ready(function() {
 	}
 
     cloudEventStream.filter(isScrampyNotCollide).onValue(fall_down);
-    cloudEventStream.filter(isScrampyCollide).onValue(function(value) {
-        var x = 10;
+    cloudEventStream.filter(isScrampyCollide).sampledBy(controlKeyEventStream).onValue(function(cloud) {
+        var bounding_box = calculateBoundingBox(cloud);
+        set_default.scrampy.css({'left': bounding_box.left, 'bottom': bounding_box.top});
     });
 });
