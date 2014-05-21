@@ -106,18 +106,19 @@ $(document).ready(function() {
     }
 
     function isScrampyAtCloud(cloud) {
+        var cloud_bounding_box = calculateBoundingBox(cloud);
         var scrampy_bounding_box = calculateBoundingBox(set_default.scrampy);
         var scrumpty_geometrical_center = {
             x: (scrampy_bounding_box.right) / 2,
             y: (scrampy_bounding_box.top) / 2
         };
         var cloud_geometrical_center = {
-            x: (cloud.right) / 2,
-            y: (cloud.top) / 2
+            x: (cloud_bounding_box.right) / 2,
+            y: (cloud_bounding_box.top) / 2
         };
         var CONTACT_OFFSET = {
-            x: (cloud.width / 2),
-            y: (cloud.height / 2)
+            x: (cloud_bounding_box.width / 2),
+            y: (cloud_bounding_box.height / 2)
         };
         return (Math.abs(scrumpty_geometrical_center.x - cloud_geometrical_center.x) < CONTACT_OFFSET.x)
                && (Math.abs(scrumpty_geometrical_center.y - cloud_geometrical_center.y) < CONTACT_OFFSET.y);
@@ -136,7 +137,7 @@ $(document).ready(function() {
 //compare two objects "scrampy and cloud"
 	objects_compare = function (obj1,obj2){
 		if(isScrampyAtRock() || isScrampyAtCloud(obj2)){
-				 console.log("yes");
+            console.log("yes");
 		} else {
 		   fall_down();
 		}
@@ -198,12 +199,10 @@ $(document).ready(function() {
 	setInterval(function(){
 	$("figure.cloud").each(function(){
 		//obj1 - scrampy
-		var obj1 = calculateBoundingBox(set_default.scrampy);
         set_default.scrampy.css('background-color', 'red');
 		//obj2 - cloud 
         $(this).css('background-color', 'red');
-		var obj2 = calculateBoundingBox($(this));
-		objects_compare(obj1,obj2);
+		objects_compare(null, $(this));
 		});
 	},100);
 });
