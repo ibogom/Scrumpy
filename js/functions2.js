@@ -124,24 +124,6 @@ $(document).ready(function() {
                && (Math.abs(scrumpty_geometrical_center.y - cloud_geometrical_center.y) < CONTACT_OFFSET.y);
     }
 
-	fall_down = function(){
-		var scrampy = set_default.scrampy;
-		var scr_top = calculateBoundingBox(set_default.scrampy).bottom;
-		var scr_left = calculateBoundingBox(set_default.scrampy).left;
-		var step = 0;
-		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
-		step = scr_top +50;
-		set_default.scrampy.css({"top":step+"px"});
-		}
-	};
-//compare two objects "scrampy and cloud"
-	objects_compare = function (obj1,obj2){
-		if(isScrampyAtRock() || isScrampyAtCloud(obj2)){
-            console.log("yes");
-		} else {
-		   fall_down();
-		}
-	};
 //function that add clouds 
 	function cloud_add (){
 		var new_id = set_default.cloud_id_ink().cloud_id;
@@ -192,17 +174,46 @@ $(document).ready(function() {
     keyupEventStream.filter(isSpaceKey).onValue(jumpAction);
     keyupEventStream.filter(isLeftArrowKey).onValue(moveLeftAction);
     keyupEventStream.filter(isRightArrowKey).onValue(moveRightAction);
+
+    function nop() {
+    }
     
 //Add clouds with interval 500 ms
 	setInterval(cloud_add,500);
 //compare 2 objects on intersaction 
-	setInterval(function(){
-	$("figure.cloud").each(function(){
-		//obj1 - scrampy
-        set_default.scrampy.css('background-color', 'red');
-		//obj2 - cloud 
-        $(this).css('background-color', 'red');
-		objects_compare(null, $(this));
-		});
-	},100);
+    var cloudEventStream = Bacon.fromBinder(function(sink) {
+        setInterval(function() {
+            $("figure.cloud").each(function(){
+                sink(new Bacon.Next($(this)));
+            });
+
+            return nop;
+        }, 100);
+    });
+
+    // collision predicates
+	function isScrampyCollide (obj2) {
+		return isScrampyAtRock() || isScrampyAtCloud(obj2);
+	}
+
+    function isScrampyNotCollide(obj) {
+        return !isScrampyCollide(obj);
+    }
+
+    // collision actions
+	function fall_down () {
+		var scrampy = set_default.scrampy;
+		var scr_top = calculateBoundingBox(set_default.scrampy).bottom;
+		var scr_left = calculateBoundingBox(set_default.scrampy).left;
+		var step = 0;
+		if(scr_top >= 0 && scr_top <= set_default.get().wind_height) {
+            step = scr_top +50;
+            set_default.scrampy.css({"top":step+"px"});
+		}
+	}
+
+    cloudEventStream.filter(isScrampyNotCollide).onValue(fall_down);
+    cloudEventStream.filter(isScrampyCollide).onValue(function(value) {
+        var x = 10;
+    });
 });
