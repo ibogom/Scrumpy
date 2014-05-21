@@ -206,7 +206,7 @@ $(document).ready(function() {
 	}
 
     cloudEventStream.filter(isScrampyNotCollide).onValue(fall_down);
-    cloudEventStream.filter(isScrampyCollide).sampledBy(controlKeyEventStream).onValue(function(cloud) {
+    cloudEventStream.filter(isScrampyAtCloud).onValue(function(cloud) {
         var bounding_box = calculateBoundingBox(cloud);
         set_default.scrampy.css({'left': bounding_box.left, 'bottom': bounding_box.top});
     });
