@@ -1,0 +1,17 @@
+{
+  "name": "scrumpy-project",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-contrib-imagemin": "^0.8.0",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-handlebars": "latest",
+    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-sass": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-remove-logging": "latest"
+  }
+}
