@@ -2,22 +2,25 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <title>Scumpy arcade game</title>
         <link href ="css/main.min.css" rel="stylesheet" type="text/css">
     </head>
-    <body oncontextmenu="return false;">
-        <div class="wrapper">
-            <figure id="scrumpy" class="animate">
-              <img src="img/scrumpy.png" />
-            </figure>
-            <div class="start">
-            	<div class="home"></div>
-                <div class="grass"></div>
-                <div class="rock"></div>
+    <body>
+        <div class="container">
+            <header></header>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="main-content">
+
+                    </div>
+                </div>
             </div>
-            <div class="obstacles_wrapper">
-            </div>
+            <footer>
+                <div class="copyright"></div>
+            </footer>
         </div>
-        <script data-main="dest/js/build.min.js" src="src/js/vendor/require.js"></script>
+        <script data-main="js/main.min.js" src="libs/require.js"></script>
     </body>
 </html>

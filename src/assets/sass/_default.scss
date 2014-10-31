@@ -1,0 +1,11 @@
+@import "fonts";
+body{
+  font-family: $sans-font-family;
+}
+ul{
+  padding: 0;
+  margin: 0;
+  li{
+    list-style: none;
+  }
+}

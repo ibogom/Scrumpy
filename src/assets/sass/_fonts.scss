@@ -1,0 +1,21 @@
+//FONTS PPORERTIES
+@font-face {
+  font-family: 'Roboto';
+  src:url('../fonts/roboto/Roboto-Thin.ttf')format('truetype'),
+  url('../fonts/roboto/Roboto-Light.ttf')format('truetype'),
+  url('../fonts/roboto/Roboto-Medium.ttf')format('truetype'),
+  url('../fonts/roboto/Roboto-Regular.ttf')format('truetype'),
+  url('../fonts/roboto/Roboto-Italic.ttf')format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+$font-19px: 1.188em;
+$font-17px: 1.063em;
+$font-14px: 0.875em;
+$font-13px: 0.813em;
+$font-12px: 0.750em;
+$font-11px: 0.688em;
+
+$base-font-size: $font-14px;
+
+$sans-font-family:"Roboto",sans-serif;

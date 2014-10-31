@@ -1,38 +1,56 @@
 module.exports = function (grunt) {
+    "use strict";
     //описываем конфигурацию 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'), //подгружаем package.json, чтобы использовать его данные
 
+        clean: {
+            short: ["dest/js", "dest/css"]
+        },
+
         jshint: {     // описываем как будет проверять наш код - jsHint
           options: {
-            curly: true,
-            eqeqeq: true,
-            immed: true,
-            latedef: true,
-            newcap: true,
-            noarg: true,
-            sub: true,
-            undef: true,
-            eqnull: true,
-            browser: true,
-            globals: {
-              jQuery: true,
-              $: true,
-              console: true
-            },
-            ignores:['src/js/vendor/*.js', 'src/js/main.js', 'src/js/build.js']
+              strict: true,
+              expr: true,
+              onecase: true,
+              maxcomplexity: 8,
+              curly: false,     //change
+              eqeqeq: false, //change
+              forin: true,
+              latedef: true,
+              newcap: true,
+              noarg: true,
+              noempty: false, //change
+              nonew: false,
+              regexp: true,
+              undef: true,
+              evil: true,
+              // options here to override JSHint defaults
+              globals: {
+                  jQuery: true,
+                  console: true,
+                  module: true,
+                  document: true,
+                  window: true,
+                  define: true
+              },
+              ignores: [
+                  'src/js/app/config/config.js',
+                  'src/js/app/init/init.js',
+                  'src/js/libs/*.js',
+                  'src/js/test/*.js',
+                  'src/js/app/App.js',
+                  'src/js/app/templates/templateCollection.js'
+              ]
           },
-          '<%= pkg.name %>': {  //вставляем название проекта из package.json
-            src: [ 'src/js/**/*.js']  //какие файлы надо проверять
-          },
-          uses_defaults: ['src/js/**/*.js']
+          uses_defaults: ['src/js/app/**/*.js']
         },
 
         handlebars:{
           compile:{
             options: {
-              namespace: "Mamba",
-              amd: "handlebars.runtime",
+              namespace: "Scrumpy",
+              amd: "handlebars",
               partialsUseNamespace: true,
               partialRegex: /.*/,
               compilerOptions: {
@@ -48,44 +66,28 @@ module.exports = function (grunt) {
                }
             },
               files: {
-                'src/js/templateCollection.js' : [ 'src/templates/*.hbs']
+                'src/js/app/templates/templateCollection.js' : [ 'src/js/app/templates/*.hbs']
               }
           }
         },
-
-        concat: {  //описываем работу плагина конкатенации
-            dist: {
-                src: ['src/js/**/*.js'],  // какие файлы конкатенировать
-                dest: 'dest/js/build.js'  // куда класть файл, который получиться после процесса конкатенации 
+        //Мультиязычность
+        ember_i18n_precompile: {
+            english: {
+                src:['src/js/app/languages/en.js'],
+                dest:'dest/js/en.js'
             }
-        },
- 
-        uglify: {  //описываем работу плагина минификации js - uglify.
-            options: {
-                stripBanners: true,
-                banner: '/* <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n' //комментарий который будет в минифицированном файле.
-            },
- 
-            build: {
-                src: 'dest/js/build.js',  // какой файл минифицировать
-                dest: 'dest/js/build.min.js' // куда класть файл, который получиться после процесса минификации
-            }
-        },
-
-        removelogging: { //описываем работу плагина удаления логов
-                dist: {
-                  src: "dest/js/build.min.js", // файл который надо отчистить от console.log
-                  dest: "dest/js/build.clean.js" // выходной файл, который получим после очистки
-                }
         },
 
         requirejs: {
             compile: {
               options: {
-                mainConfigFile: "src/js/main.js", // главный файл с описанием конфигурации и билда require.js
-                baseUrl: "src/js", 
-                include: ['../../dest/js/build.js'],
-                name: 'app', // название файла запускающего приложение
+                optimize: 'none',
+                generateSourceMaps: true,
+                preserveLicenseComments: false,
+                useSourceUrl: true,
+                mainConfigFile: "src/js/app/config/config.js", // главный файл с описанием конфигурации и билда require.js
+                baseUrl: "src/js/app",
+                name: 'init/init', // название файла запускающего приложение
                 out: "dest/js/main.min.js" // выходящий минифицированный и конкатенированный файл готовые для продакшена
               }
             }
@@ -112,47 +114,51 @@ module.exports = function (grunt) {
             }
         },
 
-        imagemin: {
-            dynamic: {
-                files: [{
-                    expand: true,
-                    cwd: 'src/assets/images/',
-                    src: ['**/*.{png,jpg,gif}'],
-                    dest: 'dest/images/'
-                }]
+        connect: {
+            options: {
+                port: 8002,
+                hostname: '*',
+                keepalive: true,
+                protocol: 'http'
+            },
+            server: {
+                options: {
+                    base: './dest'
+                }
             }
+
         },
 
         watch: { //описываем работу плагина слежки за файлами.
             scripts: {
-                files: ['src/js/*.js'],  //следить за всеми js файлами в папке src
-                tasks: ['jshint','concat','uglify','removelogging']  //при их изменении запускать следующие задачи
+                files: ['src/js/app/**/*.js'],  //следить за всеми js файлами в папке src
+                tasks: ['jshint','requirejs']  //при их изменении запускать следующие задачи
+            },
+            templates:{
+                files:['src/js/app/templates/*.hbs'],
+                tasks:['handlebars','requirejs']
             },
             css: {
                 files: ['src/assets/sass/*.scss'], //следить за всеми css файлами в папке src
                 tasks: ['sass','cssmin'] //при их изменении запускать следующую задачу
-            },
-            images: {
-                files : ['src/assets/images/*.{png,jpg,gif}'],
-                tasks: ['imagemin']
             }
         }
  
     });
  
     //подгружаем необходимые плагины
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-remove-logging');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
+    grunt.loadNpmTasks('grunt-ember-i18n-precompile');
 
     //регистрируем задачу 
-    grunt.registerTask('default', ['jshint','handlebars','concat', 'uglify', 'removelogging','requirejs', 'sass', 'cssmin', 'imagemin', 'watch']); //задача по умолчанию, просто grunt
-    grunt.registerTask('test', ['jshint']); 
+    grunt.registerTask('default', ['clean','jshint','handlebars','requirejs', 'sass', 'cssmin','watch']); //задача по умолчанию, просто grunt
+    grunt.registerTask('test', ['jshint']);
+    grunt.registerTask('server', ['connect:server']);
 };
